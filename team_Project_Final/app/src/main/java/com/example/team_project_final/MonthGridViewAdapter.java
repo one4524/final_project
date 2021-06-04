@@ -69,7 +69,7 @@ public class MonthGridViewAdapter extends BaseAdapter {
         }
 
 
-        int height = mContext.getResources().getDisplayMetrics().heightPixels - 235;
+        int height = mContext.getResources().getDisplayMetrics().heightPixels - 250;
 
 
         dayViewHolder.tvDay.setText(days.get(position));

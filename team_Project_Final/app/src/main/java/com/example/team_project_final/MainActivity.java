@@ -15,7 +15,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity implements item{
 
-    int year, month, index, page, size, prepage, date, time = 8;
+    int year, month, premonth, index, page, size, prepage, date, time = 8;
 
     private static final int FIRST_ACTIVITY_REQUEST_CODE = 0;
 
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements item{
                 Intent intent = new Intent(getApplicationContext(), ScheduleActivity.class); //그룹 만들기 화면으로 연결
 
                 intent.putExtra("year", year);
-                intent.putExtra("month", month);
+                intent.putExtra("month", premonth);
                 intent.putExtra("date", date);
                 intent.putExtra("time", time);
 
@@ -112,10 +112,6 @@ public class MainActivity extends AppCompatActivity implements item{
         this.page = page;
     }
 
-    @Override
-    public void setindex(int index) {
-        this.index = index;
-    }
 
     @Override
     public void setyear(int year) {
@@ -123,14 +119,15 @@ public class MainActivity extends AppCompatActivity implements item{
     }
 
     @Override
-    public void setMonth(int month) {
+    public void setmonth(int month) {
         this.month = month;
     }
 
     @Override
-    public void setpage(int page) {
-        this.page = page;
+    public void setpremonth(int premonth) {
+        this.premonth = premonth;
     }
+
 
     @Override
     public void setsize(int size) {
@@ -173,11 +170,6 @@ public class MainActivity extends AppCompatActivity implements item{
     }
 
     @Override
-    public int getpage() {
-        return page;
-    }
-
-    @Override
     public int getsize() {
         return size;
     }
@@ -188,17 +180,8 @@ public class MainActivity extends AppCompatActivity implements item{
     }
 
     @Override
-    public int getdate() {
-        return date;
+    public int getpremonth() {
+        return premonth;
     }
 
-    @Override
-    public int gettime() {
-        return time;
-    }
-
-    @Override
-    public int getkey() {
-        return key;
-    }
 }

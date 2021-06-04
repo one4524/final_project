@@ -4,13 +4,11 @@ public interface item {
 
     void setitem(int year, int month, int index, int page);
 
-    void setindex(int index);
-
     void setyear(int year);
 
-    void setMonth(int month);
+    void setmonth(int month);
 
-    void setpage(int page);
+    void setpremonth(int premonth);
 
     void setsize(int size);
 
@@ -28,15 +26,10 @@ public interface item {
 
     int getindex();
 
-    int getpage();
-
     int getsize();
 
     int getprepage();
 
-    int getdate();
+    int getpremonth();
 
-    int gettime();
-
-    int getkey();
 }

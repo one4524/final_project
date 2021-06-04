@@ -1,7 +1,5 @@
 package com.example.team_project_final;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,17 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -106,11 +100,11 @@ public class weekCalendarFragment extends Fragment {
 
         MainActivity activity = (MainActivity) getActivity();
 
-
         if (activity != null) {
 
             ((MainActivity) activity).setActionBarTitle(year + "년 " + month + "월");
         }
+        item.setpremonth(month);
 
     }
 
@@ -134,9 +128,6 @@ public class weekCalendarFragment extends Fragment {
 
         weekGridViewAdapter weekGridViewAdapter = new weekGridViewAdapter(getContext(), R.layout.day_cell);
         gridview_week_calendar.setAdapter(weekGridViewAdapter);
-
-        //LinearLayout date_cell = (LinearLayout) weekView.findViewById(R.id.date_cell);
-        //int width = date_cell.getWidth();
 
 
         gridview_week_calendar.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -221,7 +212,7 @@ public class weekCalendarFragment extends Fragment {
         });
 
 
-        int height = weekView.getResources().getDisplayMetrics().heightPixels - 235;
+        int height = weekView.getResources().getDisplayMetrics().heightPixels - 250;
 
         ((TextView)weekView.findViewById(R.id.time0)).setHeight(height/6 - 21);
         ((TextView)weekView.findViewById(R.id.time1)).setHeight(height/6 - 21);

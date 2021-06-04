@@ -3,7 +3,6 @@ package com.example.team_project_final;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,25 +34,23 @@ import java.util.Locale;
 
 public class ScheduleActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    int year, month, date, time, hour_start, hour_end, min_start, min_end;
+    int year, month, date, time, hour_start, hour_end, min_start, min_end, key;
 
-    private item item;
+    int[] hour_start_list, hour_end_list, min_start_list, min_end_list;
 
     double Lat = 37.57600;
     double Lon = 126.97691;
 
     EditText addressText, memo;
-    TimePicker tp_start, tp_end;
-
     private DBHelper mDbHelper;
 
-    int year_a, month_a, day_a, hour_a;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule);
 
+        setTitle("일정 관리");
 
         Intent intent = getIntent();
         intent.putExtra("key", 0);
@@ -70,21 +67,37 @@ public class ScheduleActivity extends AppCompatActivity implements OnMapReadyCal
 
 
         // 일정 시간 설정
-        tp_start = (TimePicker) findViewById(R.id.start_time);
-        tp_end = (TimePicker) findViewById(R.id.end_time);
+        TimePicker tp_start = (TimePicker) findViewById(R.id.start_time);
+        TimePicker tp_end = (TimePicker) findViewById(R.id.end_time);
+
+        tp_start.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                hour_start = hourOfDay;
+                min_start = minute;
+            }
+        });
+
+        tp_end.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                hour_end = hourOfDay;
+                min_end = minute;
+            }
+        });
 
 
         // 액티비티 실행시 첫 시간
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             tp_start.setHour(time);
             tp_start.setMinute(0);
-            tp_end.setHour(time + 1);
-            tp_end.setMinute(0);
+            tp_end.setHour(time);
+            tp_end.setMinute(59);
         } else {
             tp_start.setCurrentHour(time);
             tp_start.setCurrentMinute(0);
-            tp_end.setCurrentHour(time + 1);
-            tp_end.setCurrentMinute(0);
+            tp_end.setCurrentHour(time);
+            tp_end.setCurrentMinute(59);
         }
 
         //지도
@@ -96,7 +109,14 @@ public class ScheduleActivity extends AppCompatActivity implements OnMapReadyCal
         mDbHelper = new DBHelper(this);
 
 
+        //다이얼로그 객체
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
         // 데이터 베이스 버튼들
+        hour_start_list = new int[50];
+        hour_end_list = new int[50];
+        min_start_list = new int[50];
+        min_end_list = new int[50];
 
         // 저장 버튼 설정
         Button saveBtn = findViewById(R.id.save);
@@ -104,60 +124,76 @@ public class ScheduleActivity extends AppCompatActivity implements OnMapReadyCal
             @Override
             public void onClick(View view) {
 
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    hour_start = tp_start.getHour();
-                    min_start = tp_start.getMinute();
-                } else {
-                    hour_start = tp_start.getCurrentHour();
-                    min_start = tp_start.getCurrentMinute();
-                }
+                Cursor cursor = mDbHelper.getMyScheduleBySQL(Integer.toString(year), Integer.toString(month), Integer.toString(date));
 
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    hour_end = tp_end.getHour();
-                    min_end = tp_end.getMinute();
-                } else {
-                    hour_end = tp_end.getCurrentHour();
-                    min_end = tp_end.getCurrentMinute();
-                }
+                int i = 0;
 
-                String sql = String.format (
-                        "Select * FROM %s WHERE %s = %s and %s = %s and %s = %s and %s = %s",
-                        ScheduleContract.schedule.TABLE_NAME,
-                        ScheduleContract.schedule.KEY_YEAR, year,
-                        ScheduleContract.schedule.KEY_MONTH, month,
-                        ScheduleContract.schedule.KEY_DAY, date,
-                        ScheduleContract.schedule.KEY_TIME_START, hour_start
-                );
-
-                Cursor cursor = mDbHelper.getReadableDatabase().rawQuery(sql, null);
-
-
-                while (cursor.moveToNext()) {
-                    year_a = cursor.getInt(0);
-                    month_a = cursor.getInt(1);
-                    day_a = cursor.getInt(2);
-                    hour_a = cursor.getInt(3);
-                }
-
-                if(year == year_a){
-                    if(month == month_a){
-                        if(date == day_a){
-                            if(hour_start == hour_a){
-                                updateRecord();
-                            }else
-                                insertRecord();
-                        }else
-                            insertRecord();
-                    }else
-                        insertRecord();
-                }else
+                if(cursor.getCount() == 0){
                     insertRecord();
+                }
+                else {
+                    while (cursor.moveToNext()) {
+                        hour_start_list[i] = cursor.getInt(3);
+                        hour_end_list[i] = cursor.getInt(4);
+                        min_start_list[i] = cursor.getInt(5);
+                        min_end_list[i] = cursor.getInt(6);
+                        i++;
+                    }
 
+                    for (i = 0; i < cursor.getCount(); i++) {
+                        if (hour_end_list[i] < hour_start) {
+                            key = 1;
+                        } else if (hour_end < hour_start_list[i]) {
+                            key = 1;
+                        } else if (hour_start_list[i] == hour_end && min_start_list[i] > min_end) {
+                            key = 1;
+                        } else if (hour_end_list[i] == hour_start && min_end_list[i] < min_start) {
+                            key = 1;
+                        } else if (hour_start_list[i] == hour_start && hour_end_list[i] == hour_end && min_end_list[i] == min_end && min_start_list[i] == min_start) {
+                            builder.setTitle("일정 중복").setMessage("내용을 업데이트 하시겠습니까?");
 
-                //deleteRecord();
-                //insertRecord();
+                            builder.setPositiveButton("네", new DialogInterface.OnClickListener(){
+                                @Override
+                                public void onClick(DialogInterface dialog, int id) {
+                                    updateRecord();
+                                }
+                            });
 
-                viewAllToTextView();
+                            builder.setNegativeButton("아니요", new DialogInterface.OnClickListener(){
+                                @Override
+                                public void onClick(DialogInterface dialog, int id)
+                                {
+                                }
+                            });
+                            AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+
+                            key = 0;
+                            break;
+                        }
+                        else {
+                            builder.setTitle("일정 겹침").setMessage("같은 시간에 다른 일정이 있습니다.");
+
+                            builder.setPositiveButton("네", new DialogInterface.OnClickListener(){
+                                @Override
+                                public void onClick(DialogInterface dialog, int id) {
+
+                                }
+                            });
+                            builder.setNegativeButton(null, null);
+
+                            AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+
+                            key = 0;
+                            break;
+                        }
+                    }
+                    if(key==1){
+                        insertRecord();
+                    }
+                }
+                key = 0;
             }
         });
 
@@ -170,8 +206,6 @@ public class ScheduleActivity extends AppCompatActivity implements OnMapReadyCal
             }
         });
 
-        //다이얼로그 객체
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         //삭제 버튼 설정
         Button deleteBtn = findViewById(R.id.delete);
@@ -183,11 +217,8 @@ public class ScheduleActivity extends AppCompatActivity implements OnMapReadyCal
 
                 builder.setPositiveButton("네", new DialogInterface.OnClickListener(){
                     @Override
-                    public void onClick(DialogInterface dialog, int id)
-                    {
-                        insertRecord();
+                    public void onClick(DialogInterface dialog, int id) {
                         deleteRecord();
-                        viewAllToTextView();
                     }
                 });
 
@@ -195,7 +226,6 @@ public class ScheduleActivity extends AppCompatActivity implements OnMapReadyCal
                     @Override
                     public void onClick(DialogInterface dialog, int id)
                     {
-                        viewAllToTextView();
                     }
                 });
 
@@ -209,50 +239,28 @@ public class ScheduleActivity extends AppCompatActivity implements OnMapReadyCal
 
     //일정 갱신
     private void updateRecord() {
-
-        tp_start = (TimePicker) findViewById(R.id.start_time);
-        tp_end = (TimePicker) findViewById(R.id.end_time);
         memo = findViewById(R.id.memo);
         addressText = findViewById(R.id.get_address);
 
 
-        mDbHelper.updateUserBySQL(Integer.toString(year), Integer.toString(month), Integer.toString(date),
+        mDbHelper.updateScheduleBySQL(Integer.toString(year), Integer.toString(month), Integer.toString(date),
                 Integer.toString(hour_start), Integer.toString(hour_end), Integer.toString(min_start), Integer.toString(min_end), addressText.getText().toString(), Double.toString(Lat), Double.toString(Lon), memo.getText().toString());
     }
 
     // 일정 삭제
     private void deleteRecord() {
-        mDbHelper.deleteUserBySQL(Integer.toString(year), Integer.toString(month), Integer.toString(date),
-                Integer.toString(hour_start));
+        mDbHelper.deleteScheduleBySQL(Integer.toString(year), Integer.toString(month), Integer.toString(date),
+                Integer.toString(hour_start), Integer.toString(hour_end), Integer.toString(min_start), Integer.toString(min_end));
     }
 
     // 일정 저장
     private void insertRecord() {
-        tp_start = (TimePicker) findViewById(R.id.start_time);
-        tp_end = (TimePicker) findViewById(R.id.end_time);
         memo = findViewById(R.id.memo);
         addressText = findViewById(R.id.get_address);
 
-        mDbHelper.insertUserBySQL(Integer.toString(year), Integer.toString(month), Integer.toString(date),
+        mDbHelper.insertScheduleBySQL(Integer.toString(year), Integer.toString(month), Integer.toString(date),
                 Integer.toString(hour_start), Integer.toString(hour_end), Integer.toString(min_start), Integer.toString(min_end), addressText.getText().toString(), Double.toString(Lat), Double.toString(Lon), memo.getText().toString());
    }
-
-
-    //SQL 작동 테스트
-    private void viewAllToTextView() {
-        TextView title = (TextView) findViewById(R.id.title_time);
-
-        Cursor cursor = mDbHelper.getAllUsersBySQL();
-
-        StringBuffer buffer = new StringBuffer();
-        while (cursor.moveToNext()) {
-            buffer.append(cursor.getInt(0)+" \t");
-            buffer.append(cursor.getString(1)+" \t");
-            buffer.append(cursor.getString(2)+"\n");
-        }
-        //title.setText(buffer);
-    }
-
 
     //지도 설정
     @Override

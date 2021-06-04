@@ -27,7 +27,7 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void insertUserBySQL(String year, String month, String day, String Time_start, String Time_end, String min_start, String min_end, String address, String lat, String lon, String memo) {
+    public void insertScheduleBySQL(String year, String month, String day, String Time_start, String Time_end, String min_start, String min_end, String address, String lat, String lon, String memo) {
         try {
             String sql = String.format (
                     "INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )",
@@ -53,20 +53,35 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getAllUsersBySQL() {
+    public Cursor getAllScheduleBySQL() {
         String sql = "Select * FROM " + ScheduleContract.schedule.TABLE_NAME;
         return getReadableDatabase().rawQuery(sql,null);
     }
 
-    public void deleteUserBySQL(String year, String month, String day, String Time_start) {
+    public Cursor getMyScheduleBySQL(String year, String month, String day) {
+        String sql = String.format (
+                "Select * FROM %s WHERE %s = %s and %s = %s and %s = %s",
+                ScheduleContract.schedule.TABLE_NAME,
+                ScheduleContract.schedule.KEY_YEAR, year,
+                ScheduleContract.schedule.KEY_MONTH, month,
+                ScheduleContract.schedule.KEY_DAY, day
+        );
+        return getReadableDatabase().rawQuery(sql,null);
+
+    }
+
+    public void deleteScheduleBySQL(String year, String month, String day, String Time_start, String Time_end, String min_start, String min_end) {
         try {
             String sql = String.format (
-                    "DELETE FROM %s WHERE %s = %s and %s = %s and %s = %s and %s = %s",
+                    "DELETE FROM %s WHERE %s = %s and %s = %s and %s = %s and %s = %s and %s = %s and %s = %s and %s = %s",
                     ScheduleContract.schedule.TABLE_NAME,
                     ScheduleContract.schedule.KEY_YEAR, year,
                     ScheduleContract.schedule.KEY_MONTH, month,
                     ScheduleContract.schedule.KEY_DAY, day,
-                    ScheduleContract.schedule.KEY_TIME_START, Time_start
+                    ScheduleContract.schedule.KEY_TIME_START, Time_start,
+                    ScheduleContract.schedule.KEY_TIME_END, Time_end,
+                    ScheduleContract.schedule.KEY_MIN_START, min_start,
+                    ScheduleContract.schedule.KEY_MIN_END, min_end
                     );
             getWritableDatabase().execSQL(sql);
         } catch (SQLException e) {
@@ -74,10 +89,10 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void updateUserBySQL(String year, String month, String day, String Time_start, String Time_end, String min_start, String min_end, String address, String lat, String lon, String memo) {
+    public void updateScheduleBySQL(String year, String month, String day, String Time_start, String Time_end, String min_start, String min_end, String address, String lat, String lon, String memo) {
         try {
             String sql = String.format (
-                    "UPDATE %s SET %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s' WHERE %s = %s and %s = %s and %s = %s and %s = %s",
+                    "UPDATE %s SET %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s' WHERE %s = %s and %s = %s and %s = %s and %s = %s and %s = %s  and %s = %s and %s = %s",
                     ScheduleContract.schedule.TABLE_NAME,
                     ScheduleContract.schedule.KEY_YEAR, year,
                     ScheduleContract.schedule.KEY_MONTH, month,
@@ -93,7 +108,10 @@ public class DBHelper extends SQLiteOpenHelper {
                     ScheduleContract.schedule.KEY_YEAR, year,
                     ScheduleContract.schedule.KEY_MONTH, month,
                     ScheduleContract.schedule.KEY_DAY, day,
-                    ScheduleContract.schedule.KEY_TIME_START, Time_start) ;
+                    ScheduleContract.schedule.KEY_TIME_START, Time_start,
+                    ScheduleContract.schedule.KEY_TIME_END, Time_end,
+                    ScheduleContract.schedule.KEY_MIN_START, min_start,
+                    ScheduleContract.schedule.KEY_MIN_END, min_end) ;
             getWritableDatabase().execSQL(sql);
         } catch (SQLException e) {
             Log.e(TAG,"Error in updating recodes");

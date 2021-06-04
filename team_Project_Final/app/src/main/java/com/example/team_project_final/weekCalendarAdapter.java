@@ -96,6 +96,7 @@ public class weekCalendarAdapter extends FragmentStateAdapter {
             item.setsize(days.size());
 
         }
+        // 페이지를 왼쪽으로 넘길 때
         else if (prepage > position) {
 
             index -= 7;
@@ -137,10 +138,12 @@ public class weekCalendarAdapter extends FragmentStateAdapter {
             if (month < 1) {
                 year -= 1;
                 month = 12;
+                item.setpremonth(1);
             }
 
             setdatelist();
             item.setsize(days.size());
+
         }
 
         item.setprepage(position);

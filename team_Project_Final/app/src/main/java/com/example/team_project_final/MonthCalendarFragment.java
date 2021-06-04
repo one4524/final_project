@@ -1,6 +1,5 @@
 package com.example.team_project_final;
 
-import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -10,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -59,7 +57,8 @@ public class MonthCalendarFragment extends Fragment {
             ((MainActivity) activity).setActionBarTitle(year+"년 "+month+"월");
 
             item.setyear(year);
-            item.setMonth(month);
+            item.setmonth(month);
+            item.setpremonth(month);
         }
 
     }
