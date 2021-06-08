@@ -27,11 +27,12 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void insertScheduleBySQL(String year, String month, String day, String Time_start, String Time_end, String min_start, String min_end, String address, String lat, String lon, String memo) {
+    public void insertScheduleBySQL(String title, String year, String month, String day, String Time_start, String Time_end, String min_start, String min_end, String address, String lat, String lon, String memo) {
         try {
             String sql = String.format (
-                    "INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )",
+                    "INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )",
                     ScheduleContract.schedule.TABLE_NAME,
+                    ScheduleContract.schedule.KEY_TITLE,
                     ScheduleContract.schedule.KEY_YEAR,
                     ScheduleContract.schedule.KEY_MONTH,
                     ScheduleContract.schedule.KEY_DAY,
@@ -43,9 +44,9 @@ public class DBHelper extends SQLiteOpenHelper {
                     ScheduleContract.schedule.KEY_LATITUDE,
                     ScheduleContract.schedule.KEY_LONGITUDE,
                     ScheduleContract.schedule.KEY_MEMO,
-                    year, month, day, Time_start,
+                    title, year, month, day, Time_start,
                     Time_end, min_start, min_end, address, lat, lon, memo
-                    );
+            );
 
             getWritableDatabase().execSQL(sql);
         } catch (SQLException e) {
@@ -89,11 +90,12 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void updateScheduleBySQL(String year, String month, String day, String Time_start, String Time_end, String min_start, String min_end, String address, String lat, String lon, String memo) {
+    public void updateScheduleBySQL(String title, String year, String month, String day, String Time_start, String Time_end, String min_start, String min_end, String address, String lat, String lon, String memo) {
         try {
             String sql = String.format (
-                    "UPDATE %s SET %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s' WHERE %s = %s and %s = %s and %s = %s and %s = %s and %s = %s  and %s = %s and %s = %s",
+                    "UPDATE %s SET %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s', %s = '%s' WHERE %s = %s and %s = %s and %s = %s and %s = %s and %s = %s  and %s = %s and %s = %s",
                     ScheduleContract.schedule.TABLE_NAME,
+                    ScheduleContract.schedule.KEY_TITLE, title,
                     ScheduleContract.schedule.KEY_YEAR, year,
                     ScheduleContract.schedule.KEY_MONTH, month,
                     ScheduleContract.schedule.KEY_DAY, day,
@@ -117,6 +119,5 @@ public class DBHelper extends SQLiteOpenHelper {
             Log.e(TAG,"Error in updating recodes");
         }
     }
-
 
 }

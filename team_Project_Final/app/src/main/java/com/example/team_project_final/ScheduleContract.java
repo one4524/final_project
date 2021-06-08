@@ -5,8 +5,8 @@ import android.provider.BaseColumns;
 public final class ScheduleContract {
     public static final String DB_NAME="schedule.db";
     public static final int DATABASE_VERSION = 1;
-    private static final String TEXT_TYPE = " TEXT NOT NULL";
-    private static final String COMMA_SEP = ",";
+    //private static final String TEXT_TYPE = " TEXT";
+    //private static final String COMMA_SEP = ",";
     // To prevent someone from accidentally instantiating the contract class,
     // make the constructor private.
     private ScheduleContract() {}
@@ -14,6 +14,7 @@ public final class ScheduleContract {
     /* Inner class that defines the table contents */
     public static class schedule implements BaseColumns {
         public static final String TABLE_NAME="Schedule";
+        public static final String KEY_TITLE = "Title";
         public static final String KEY_YEAR = "Year";
         public static final String KEY_MONTH = "Month";
         public static final String KEY_DAY = "Day";
@@ -28,6 +29,7 @@ public final class ScheduleContract {
 
 
         public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" +
+                KEY_TITLE + " TEXT, " +
                 KEY_YEAR + " TEXT, " +
                 KEY_MONTH + " TEXT, " +
                 KEY_DAY + " TEXT, " +

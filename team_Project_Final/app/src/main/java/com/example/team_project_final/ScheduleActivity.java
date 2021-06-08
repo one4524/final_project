@@ -41,7 +41,7 @@ public class ScheduleActivity extends AppCompatActivity implements OnMapReadyCal
     double Lat = 37.57600;
     double Lon = 126.97691;
 
-    EditText addressText, memo;
+    EditText addressText, memo, title;
     private DBHelper mDbHelper;
 
 
@@ -62,7 +62,7 @@ public class ScheduleActivity extends AppCompatActivity implements OnMapReadyCal
         time = intent.getIntExtra("time", 8);
 
         // 제목에 날짜 설정
-        TextView  title = (TextView ) findViewById(R.id.title_time);
+        title = (EditText ) findViewById(R.id.title);
         title.setText(year + "년 " + month + "월 " + date + "일 " + time + "시");
 
 
@@ -133,10 +133,10 @@ public class ScheduleActivity extends AppCompatActivity implements OnMapReadyCal
                 }
                 else {
                     while (cursor.moveToNext()) {
-                        hour_start_list[i] = cursor.getInt(3);
-                        hour_end_list[i] = cursor.getInt(4);
-                        min_start_list[i] = cursor.getInt(5);
-                        min_end_list[i] = cursor.getInt(6);
+                        hour_start_list[i] = cursor.getInt(4);
+                        hour_end_list[i] = cursor.getInt(5);
+                        min_start_list[i] = cursor.getInt(6);
+                        min_end_list[i] = cursor.getInt(7);
                         i++;
                     }
 
@@ -243,7 +243,7 @@ public class ScheduleActivity extends AppCompatActivity implements OnMapReadyCal
         addressText = findViewById(R.id.get_address);
 
 
-        mDbHelper.updateScheduleBySQL(Integer.toString(year), Integer.toString(month), Integer.toString(date),
+        mDbHelper.updateScheduleBySQL(title.getText().toString(), Integer.toString(year), Integer.toString(month), Integer.toString(date),
                 Integer.toString(hour_start), Integer.toString(hour_end), Integer.toString(min_start), Integer.toString(min_end), addressText.getText().toString(), Double.toString(Lat), Double.toString(Lon), memo.getText().toString());
     }
 
@@ -258,9 +258,9 @@ public class ScheduleActivity extends AppCompatActivity implements OnMapReadyCal
         memo = findViewById(R.id.memo);
         addressText = findViewById(R.id.get_address);
 
-        mDbHelper.insertScheduleBySQL(Integer.toString(year), Integer.toString(month), Integer.toString(date),
+        mDbHelper.insertScheduleBySQL(title.getText().toString(), Integer.toString(year), Integer.toString(month), Integer.toString(date),
                 Integer.toString(hour_start), Integer.toString(hour_end), Integer.toString(min_start), Integer.toString(min_end), addressText.getText().toString(), Double.toString(Lat), Double.toString(Lon), memo.getText().toString());
-   }
+    }
 
     //지도 설정
     @Override
