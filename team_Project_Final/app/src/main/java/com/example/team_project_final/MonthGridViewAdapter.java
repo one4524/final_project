@@ -20,27 +20,27 @@ public class MonthGridViewAdapter extends BaseAdapter {
     private Context mContext;
     private int mResource;
     private LayoutInflater mLiInflater;
-    ArrayList<String> days; //날짜 리스트 생성
+    ArrayList<MonthCalendarFragment.Item> items; //날짜 리스트 생성
 
 
 
-    public MonthGridViewAdapter(Context context, int textResource, ArrayList<String> days) {
+    public MonthGridViewAdapter(Context context, int textResource, ArrayList<MonthCalendarFragment.Item> items) {
 
         this.mContext = context;
         this.mResource = textResource;
-        this.days = days;
+        this.items = items;
         this.mLiInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
 
     @Override
     public int getCount() {
-        return days.size();
+        return items.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return days.get(position);
+        return items.get(position);
     }
 
     @Override
@@ -72,7 +72,12 @@ public class MonthGridViewAdapter extends BaseAdapter {
         int height = mContext.getResources().getDisplayMetrics().heightPixels - 250;
 
 
-        dayViewHolder.tvDay.setText(days.get(position));
+        String txt = items.get(position).day;
+        for(String s:items.get(position).titles){
+            txt += "\n" + s;
+        }
+
+        dayViewHolder.tvDay.setText(txt);
         dayViewHolder.tvDay.setHeight(height/6 - 5);
 
 

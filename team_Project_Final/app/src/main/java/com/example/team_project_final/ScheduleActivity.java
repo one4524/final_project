@@ -303,4 +303,16 @@ public class ScheduleActivity extends AppCompatActivity implements OnMapReadyCal
         });
 
     }
+
+    /* private void viewAllToTextView() {
+        TextView result = (TextView)findViewById(R.id.);
+
+        Cursor cursor = mDbHelper.getAllScheduleBySQL();
+
+        StringBuffer buffer = new StringBuffer();
+        while (cursor.moveToNext()) {
+            buffer.append(cursor.getString(1)+" \t");
+        }
+        result.setText(buffer);
+    } */
 }

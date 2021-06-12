@@ -67,7 +67,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 ScheduleContract.schedule.KEY_MONTH, month,
                 ScheduleContract.schedule.KEY_DAY, day
         );
-        return getReadableDatabase().rawQuery(sql,null);
+        try {
+            return getReadableDatabase().rawQuery(sql,null);
+        }catch (NullPointerException e){
+            return null;
+        }
+
 
     }
 
@@ -83,7 +88,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     ScheduleContract.schedule.KEY_TIME_END, Time_end,
                     ScheduleContract.schedule.KEY_MIN_START, min_start,
                     ScheduleContract.schedule.KEY_MIN_END, min_end
-                    );
+            );
             getWritableDatabase().execSQL(sql);
         } catch (SQLException e) {
             Log.e(TAG,"Error in deleting recodes");
