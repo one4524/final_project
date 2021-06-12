@@ -76,6 +76,22 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    public Cursor getMyMonthScheduleBySQL(String year, String month) {
+        String sql = String.format (
+                "Select * FROM %s WHERE %s = %s and %s = %s",
+                ScheduleContract.schedule.TABLE_NAME,
+                ScheduleContract.schedule.KEY_YEAR, year,
+                ScheduleContract.schedule.KEY_MONTH, month
+        );
+        try {
+            return getReadableDatabase().rawQuery(sql,null);
+        }catch (NullPointerException e){
+            return null;
+        }
+
+
+    }
+
     public void deleteScheduleBySQL(String year, String month, String day, String Time_start, String Time_end, String min_start, String min_end) {
         try {
             String sql = String.format (

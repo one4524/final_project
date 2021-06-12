@@ -37,7 +37,7 @@ public class MonthCalendarFragment extends Fragment {
     int year, month;
     private item item;
     ArrayList<Item> items = new ArrayList<>();
-    DBHelper dbHelper = new DBHelper(getContext());
+    DBHelper dbHelper;
     MonthGridViewAdapter monthGridViewAdapter;
 
 
@@ -81,6 +81,7 @@ public class MonthCalendarFragment extends Fragment {
         }
 
         item = (item) getActivity();
+        dbHelper = new DBHelper(getContext());
 
         setdatelist_month();
     }
@@ -120,7 +121,10 @@ public class MonthCalendarFragment extends Fragment {
                 }else{
                     item.setdate(0);
                 }
-            }    private DBHelper mDbHelper;
+
+                // TODO::dialog
+
+            }
 
         });
 
@@ -152,10 +156,10 @@ public class MonthCalendarFragment extends Fragment {
         }
         for (int i = 1; i <= lastday; i++) {
             Item item = new Item();
-            item.day = String.valueOf(i);  //해당 월의 1일부터 마지막날까지 순서대로 넣음.
-            Cursor cursor = dbHelper.getMyScheduleBySQL(String.valueOf(year), String.valueOf(month), item.day);
+            item.day = Integer.toString(i);  //해당 월의 1일부터 마지막날까지 순서대로 넣음.
+            Cursor cursor = dbHelper.getMyScheduleBySQL(Integer.toString(year), Integer.toString(month), item.day);
             while(cursor != null && cursor.moveToNext()){
-                item.titles.add(cursor.getString(1));
+                item.titles.add(cursor.getString(0));
             }
             items.add(item);
         }
