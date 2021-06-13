@@ -1,5 +1,9 @@
 package com.example.team_project_final;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -12,8 +16,11 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,8 +39,11 @@ public class MonthCalendarFragment extends Fragment {
     private int mParam2;
 
     int year, month;
-    ArrayList<String> days;
     private item item;
+    ArrayList<Item> items = new ArrayList<>();
+    DBHelper dbHelper;
+    MonthGridViewAdapter monthGridViewAdapter;
+
 
     public MonthCalendarFragment() {
         // Required empty public constructor
@@ -75,8 +85,14 @@ public class MonthCalendarFragment extends Fragment {
         }
 
         item = (item) getActivity();
+        dbHelper = new DBHelper(getContext());
 
         setdatelist_month();
+    }
+
+    class Item{
+        String day;
+        ArrayList<String> titles = new ArrayList<>();
     }
 
     @Override
@@ -86,8 +102,9 @@ public class MonthCalendarFragment extends Fragment {
 
         final GridView gridview_month_calendar = monthView.findViewById(R.id.month_calendar);
 
-        MonthGridViewAdapter monthGridViewAdapter = new MonthGridViewAdapter(getContext(), R.layout.day_cell, days);
+        monthGridViewAdapter = new MonthGridViewAdapter(getContext(), R.layout.day_cell, items);
         gridview_month_calendar.setAdapter(monthGridViewAdapter);
+
 
         gridview_month_calendar.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
@@ -97,20 +114,20 @@ public class MonthCalendarFragment extends Fragment {
                 }
 
 
-                if(days.get(position) != " ") {
+                if(items.get(position).day != " ") {
                     Toast.makeText(getContext(),
-                            year +"."+ month+"."+ (days.get(position))+ "일",
+                            year +"."+ month+"."+ (items.get(position).day)+ "일",
                             Toast.LENGTH_SHORT).show();
                     gridview_month_calendar.getChildAt(position).setBackgroundColor(Color.parseColor("#00ffff"));
 
-                    item.setdate(Integer.parseInt(days.get(position)));
+                    item.setdate(Integer.parseInt(items.get(position).day));
                     item.settime(8);
                     item.setkey(1);
                 }else{
                     item.setdate(0);
                 }
 
-               /* AlertDialog.Builder dlg = new AlertDialog.Builder(getActivity());
+                AlertDialog.Builder dlg = new AlertDialog.Builder(getActivity());
                 dlg.setTitle(year+"."+month+"."+items.get(position).day);
 
                 CharSequence[] cs = items.get(position).titles.toArray(new CharSequence[items.get(position).titles.size()]);
@@ -118,12 +135,13 @@ public class MonthCalendarFragment extends Fragment {
                 dlg.setItems(cs, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // TODO: 페이지 이동
+                        // TODO:페이지 이동
                     }
                 });
-                dlg.show(); */
+                dlg.show();
 
             }
+
         });
 
         return monthView;
@@ -144,12 +162,29 @@ public class MonthCalendarFragment extends Fragment {
 
         int end_empty_day = 42 - (front_empty_day + lastday);   //6x7의 모양을 유지하기위해 필요한 공백
 
-        days = new ArrayList<String>(); //날짜 리스트 생성
+        //days = new ArrayList<String>(); //날짜 리스트 생성
 
 
-        for (int i = 0; i < front_empty_day; i++) days.add(" "); //1일 앞의 공백
-        for (int i = 1; i <= lastday; i++)
-            days.add(String.valueOf(i));  //해당 월의 1일부터 마지막날까지 순서대로 넣음.
-        for (int i = 0; i < end_empty_day; i++) days.add(" ");   // 모양 유지 공백
+        for (int i = 0; i < front_empty_day; i++) {
+            Item item = new Item();
+            item.day = " "; //1일 앞의 공백
+            items.add(item);
+        }
+        for (int i = 1; i <= lastday; i++) {
+            Item item = new Item();
+            item.day = Integer.toString(i);  //해당 월의 1일부터 마지막날까지 순서대로 넣음.
+            Cursor cursor = dbHelper.getMyScheduleBySQL(Integer.toString(year), Integer.toString(month), item.day);
+            while(cursor != null && cursor.moveToNext()){
+                item.titles.add(cursor.getString(0));
+            }
+            items.add(item);
+        }
+        for (int i = 0; i < end_empty_day; i++) {
+            Item item = new Item();
+            item.day = " "; // 모양 유지 공백
+            items.add(item);
+        }
+
+
     }
 }
