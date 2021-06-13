@@ -109,6 +109,20 @@ public class MonthCalendarFragment extends Fragment {
                 }else{
                     item.setdate(0);
                 }
+
+               /* AlertDialog.Builder dlg = new AlertDialog.Builder(getActivity());
+                dlg.setTitle(year+"."+month+"."+items.get(position).day);
+
+                CharSequence[] cs = items.get(position).titles.toArray(new CharSequence[items.get(position).titles.size()]);
+
+                dlg.setItems(cs, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO: 페이지 이동
+                    }
+                });
+                dlg.show(); */
+
             }
         });
 
