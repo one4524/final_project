@@ -1,5 +1,7 @@
 package com.example.team_project_final;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -16,7 +18,9 @@ import android.widget.Toast;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -101,6 +105,7 @@ public class MonthCalendarFragment extends Fragment {
         monthGridViewAdapter = new MonthGridViewAdapter(getContext(), R.layout.day_cell, items);
         gridview_month_calendar.setAdapter(monthGridViewAdapter);
 
+
         gridview_month_calendar.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
@@ -122,6 +127,18 @@ public class MonthCalendarFragment extends Fragment {
                     item.setdate(0);
                 }
 
+                AlertDialog.Builder dlg = new AlertDialog.Builder(getActivity());
+                dlg.setTitle(year+"."+month+"."+items.get(position).day);
+
+                CharSequence[] cs = items.get(position).titles.toArray(new CharSequence[items.get(position).titles.size()]);
+
+                dlg.setItems(cs, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 페이지 이동
+                    }
+                });
+                dlg.show();
                 // TODO::dialog
 
             }

@@ -87,11 +87,13 @@ public class weekCalendarFragment extends Fragment {
             index = mParam3;
             days = mParam4;
 
+        }
+
             item = (item) getActivity();
 
             setdatelist();
 
-        }
+
     }
 
     @Override
